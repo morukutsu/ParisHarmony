@@ -91,13 +91,21 @@ void Chords::serialize(MemoryOutputStream& stream)
 	// Write MAGIC and VERSION number
 	for (int i = 0; i < 4; i++)
 		stream.writeByte(PLUGIN_MAGIC[i]);
-	stream.writeInt(static_cast<int>(PluginFormatVersion::V0));
+	stream.writeInt(static_cast<int>(PluginFormatVersion::V1));
 
 	// Write content
 	stream.writeInt(scroll);
 	stream.writeInt(baseCC);
 	stream.writeInt(octaveMode);
 	stream.writeInt(chordsMode);
+
+	for (int i = 0; i < CHORDS_COUNT; i++)
+	{
+		for (int j = 0; j < NOTES_MAX; j++)
+		{
+			stream.writeInt(chordsMem[i].notes[j]);
+		}
+	}
 }
 
 void Chords::unserialize(MemoryInputStream& stream)
@@ -107,6 +115,17 @@ void Chords::unserialize(MemoryInputStream& stream)
 	baseCC = stream.readInt();
 	octaveMode = stream.readInt();
 	chordsMode = stream.readInt();
+
+	if (version == V0)
+		return;
+
+	for (int i = 0; i < CHORDS_COUNT; i++)
+	{
+		for (int j = 0; j < NOTES_MAX; j++)
+		{
+			chordsMem[i].notes[j] = stream.readInt();
+		}
+	}
 }
 
 PluginFormatVersion Chords::detectFormatVersion(MemoryInputStream& stream)

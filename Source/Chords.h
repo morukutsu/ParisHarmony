@@ -10,6 +10,7 @@
 enum PluginFormatVersion
 {
 	V0 = 0,
+	V1 = 1,
 };
 
 struct NoteOff
