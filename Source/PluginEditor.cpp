@@ -7,7 +7,7 @@
 ParisHarmonyAudioProcessorEditor::ParisHarmonyAudioProcessorEditor (ParisHarmonyAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-	setSize(470, 300);
+	setSize(440, 300);
 	startTimerHz(60);
 
 	isMouseDown = isMouseClicked = isMouseDrag = false;
