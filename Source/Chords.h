@@ -22,6 +22,14 @@ struct Note
 	int cc, timestamp;
 };
 
+const unsigned int CHORDS_COUNT = 7;
+const unsigned int NOTES_MAX = 16;
+
+struct ChordMemory
+{
+	int notes[NOTES_MAX]; // 16 notes max, -1 if disabled, otherwise midi note number
+};
+
 class Chords
 {
 public:
@@ -31,6 +39,7 @@ public:
 
 	void holdNote(int cc);
 	void dontHoldNote(int cc);
+	void holdRecordedChord(int chordIndex);
 
 	int getMajorScale(int baseNote, int relative);
 
@@ -49,6 +58,9 @@ public:
 	int octaveMode, chordsMode;
 
 	bool ccHeld[128];
+
+	ChordMemory chordsMem[CHORDS_COUNT];
+	int chordRecordId;
 };
 
 

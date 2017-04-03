@@ -9,8 +9,14 @@ Chords::Chords()
 	octaveMode = 0;
 	chordsMode = 2;
 
+	chordRecordId = -1;
+
 	for (int i = 0; i < 128; i++)
 		ccHeld[i] = false;
+
+	for (int i = 0; i < CHORDS_COUNT; i++)
+		for (int j = 0; j < NOTES_MAX; j++)
+			chordsMem[i].notes[j] = -1;
 }
 
 void Chords::update(unsigned int numSamples, MidiBuffer& midiMessages)
@@ -20,7 +26,9 @@ void Chords::update(unsigned int numSamples, MidiBuffer& midiMessages)
 	for (int i = 0; i < 128; i++)
 	{
 		if (ccHeld[i])
+		{
 			notesHeld.insert(i);
+		}
 	}
 
 	// Compare previous notes held and new ones to send notes on
@@ -58,6 +66,18 @@ void Chords::holdNote(int cc)
 void Chords::dontHoldNote(int cc)
 {
 	ccHeld[cc] = false;
+}
+
+void Chords::holdRecordedChord(int chordIndex)
+{
+	for (int i = 0; i < NOTES_MAX; i++)
+	{
+		int note = chordsMem[chordIndex].notes[i];
+		if (note != -1)
+		{
+			ccHeld[note] = true;
+		}
+	}
 }
 
 int Chords::getMajorScale(int baseNote, int relative)

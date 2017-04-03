@@ -153,7 +153,7 @@ bool drawKnobValue(int* value, int min, int max, int x, int y, int w, int h, cha
 	return changed;
 }
 
-bool drawButton(bool* enabled, char* text, int x, int y, int w, int h, Graphics& g, int mx, int my, bool mouseDown, bool mouseClick)
+bool drawButton(bool* enabled, char* text, int x, int y, int w, int h, Graphics& g, int mx, int my, bool mouseDown, bool mouseClick, bool holdMode)
 {
 	bool disableInteractions = currentDragId != -1;
 	bool hover = (mx >= x && my >= y && mx <= x + w && my <= y + h);
@@ -167,6 +167,9 @@ bool drawButton(bool* enabled, char* text, int x, int y, int w, int h, Graphics&
 			g.setColour(LIGHT_GREY_HOVER_COLOR);
 
 		clicked = mouseClick;
+
+		if (holdMode)
+			clicked = mouseDown;
 	}
 	else
 	{

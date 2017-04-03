@@ -29,6 +29,11 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 	f.setBold(true);
 	g.setFont(f);
 	
+	bool isPlayedChord = false;
+
+	for (int i = 0; i < 128; i++)
+		notesHeldDuringFrame[i] = false;
+
 	float notesAreaX = 64;
 	float notesAreaY = 16;
 
@@ -172,6 +177,37 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 
 	x += 64 + 16;
 	
+	// Chords memory
+	for (int i = 0; i < CHORDS_COUNT; i++)
+	{
+		x = 330;
+		int y = 28;
+		bool enabled = processor.mChords.chordRecordId == i;
+		if (drawClickableSquare(&enabled, x, y + i * 32, g, mousePos.x, mousePos.y, isMouseDown, isMouseClicked))
+		{
+			if (processor.mChords.chordRecordId == i)
+				processor.mChords.chordRecordId = -1;
+			else
+				processor.mChords.chordRecordId = i;
+		}
+
+		// Mem button
+		bool dummy = false;
+		char buf[16];
+		sprintf(buf, "MEM. %d", i + 1);
+		if (drawButton(&dummy, buf, x + 28, y + i * 32, 64, 16, g, mousePos.x, mousePos.y, isMouseDown, isMouseClicked, true))
+		{
+			isPlayedChord = true;
+
+			for (int j = 0; j < NOTES_MAX; j++)
+			{
+				int note = processor.mChords.chordsMem[i].notes[j];
+				if (note != -1)
+					notesHeldDuringFrame[note] = true;
+			}
+		}
+	}
+
 	// Cursor
 	g.setColour(juce::Colour::fromRGBA(255, 255, 255, 96));
 	g.fillRect(cursorX, cursorY, cursorW, cursorH);
@@ -186,6 +222,39 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 	else
 	{
 		setMouseCursor(MouseCursor::NormalCursor);
+	}
+
+	// Record notes to mem
+	int inChordIndex = 0;
+	bool clearMem = false;
+
+	
+	for (int i = 0; i < 128; i++)
+	{
+		if (!isPlayedChord)
+		{
+			if (notesHeldDuringFrame[i])
+			{
+				// Record chords
+				if (processor.mChords.chordRecordId != -1)
+				{
+					if (!clearMem)
+					{
+						for (int j = 0; j < NOTES_MAX; j++)
+							processor.mChords.chordsMem[processor.mChords.chordRecordId].notes[j] = -1;
+						clearMem = true;
+					}
+
+					if (inChordIndex < NOTES_MAX)
+					{
+						processor.mChords.chordsMem[processor.mChords.chordRecordId].notes[inChordIndex] = i;
+						inChordIndex++;
+					}
+				}
+			}
+		}
+
+		processor.mChords.ccHeld[i] = notesHeldDuringFrame[i];
 	}
 }
 
@@ -220,22 +289,16 @@ int ParisHarmonyAudioProcessorEditor::paintNoteGroup(Graphics& g, int x, int y, 
 
 				if (isMouseDown)
 				{
-					processor.mChords.holdNote(note);
-				}
-				else
-				{
-					processor.mChords.dontHoldNote(note);
+					notesHeldDuringFrame[note] = true;
 				}
 			}
 			else
 			{
 				g.setColour(HIGHLIGHT_COLOR);
-				processor.mChords.dontHoldNote(note);
 			}
 		}
 		else
 			g.setColour(MEDIUM_GREY_COLOR);
-
 
 		g.fillRect(xPos, yPos, noteW, noteH);
 

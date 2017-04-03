@@ -29,6 +29,8 @@ public:
 	bool isMouseDown, isMouseClicked, isMouseDrag;
 	int mouseDragDistanceY;
 
+	bool notesHeldDuringFrame[128];
+
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
