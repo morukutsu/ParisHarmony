@@ -11,6 +11,7 @@ enum PluginFormatVersion
 {
 	V0 = 0,
 	V1 = 1,
+	V2 = 2,
 };
 
 struct NoteOff
@@ -42,7 +43,7 @@ public:
 	void dontHoldNote(int cc);
 	void holdRecordedChord(int chordIndex);
 
-	int getMajorScale(int baseNote, int relative);
+	int getScale(int baseNote, int relative);
 
 	void serialize(MemoryOutputStream& stream);
 	void unserialize(MemoryInputStream& stream);
@@ -62,6 +63,8 @@ public:
 
 	ChordMemory chordsMem[CHORDS_COUNT];
 	int chordRecordId;
+
+	int currentScale;
 };
 
 

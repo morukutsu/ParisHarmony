@@ -11,6 +11,8 @@ Chords::Chords()
 
 	chordRecordId = -1;
 
+	currentScale = 0;
+
 	for (int i = 0; i < 128; i++)
 		ccHeld[i] = false;
 
@@ -80,10 +82,18 @@ void Chords::holdRecordedChord(int chordIndex)
 	}
 }
 
-int Chords::getMajorScale(int baseNote, int relative)
+int Chords::getScale(int baseNote, int relative)
 {
-	int scale[7] = { 0, 2, 4, 5, 7, 9, 11 };
-	return baseNote + scale[relative];
+	int scales[6][7] = {
+		{ 0, 2, 4, 5, 7, 9, 11 }, // MAJOR
+		{ 0, 2, 3, 5, 7, 8, 10 }, // MINOR
+		{ 0, 2, 4, 5, 7, 8, 11 }, // Harmonic Major
+		{ 0, 2, 3, 5, 7, 8, 11 }, // Harmonic Minor
+		{ 0, 2, 4, 5, 7, 8, 10 }, // Melodic Major
+		{ 0, 2, 3, 5, 7, 9, 11 }, // Melodic Minor
+	};
+
+	return baseNote + scales[currentScale][relative];
 }
 
 void Chords::serialize(MemoryOutputStream& stream)
@@ -91,7 +101,7 @@ void Chords::serialize(MemoryOutputStream& stream)
 	// Write MAGIC and VERSION number
 	for (int i = 0; i < 4; i++)
 		stream.writeByte(PLUGIN_MAGIC[i]);
-	stream.writeInt(static_cast<int>(PluginFormatVersion::V1));
+	stream.writeInt(static_cast<int>(PluginFormatVersion::V2));
 
 	// Write content
 	stream.writeInt(scroll);
@@ -106,6 +116,8 @@ void Chords::serialize(MemoryOutputStream& stream)
 			stream.writeInt(chordsMem[i].notes[j]);
 		}
 	}
+
+	stream.writeInt(currentScale);
 }
 
 void Chords::unserialize(MemoryInputStream& stream)
@@ -126,6 +138,11 @@ void Chords::unserialize(MemoryInputStream& stream)
 			chordsMem[i].notes[j] = stream.readInt();
 		}
 	}
+
+	if (version == V1)
+		return;
+
+	currentScale = stream.readInt();
 }
 
 PluginFormatVersion Chords::detectFormatVersion(MemoryInputStream& stream)

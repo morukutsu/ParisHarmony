@@ -119,7 +119,7 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 	{
 		bool enabled = false;
 
-		int note = processor.mChords.getMajorScale(processor.mChords.baseCC, 6 - relative);
+		int note = processor.mChords.getScale(processor.mChords.baseCC, 6 - relative);
 
 		char noteName[16];
 		noteToStr(noteName, note);
@@ -133,6 +133,11 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 
 	// Offset
 	drawKnobValue(&processor.mChords.scroll, 0, 127, 16, areaEndY + 10, 32, 16, NULL, g, mousePos.x, mousePos.y, isMouseDrag, mouseDragDistanceY);
+
+	// Scale
+	char* scaleNames[6] = { "MAJOR", "MINOR", "MAJOR H.", "MINOR H.", "MAJOR M.", "MINOR M." };
+	drawKnobValue(&processor.mChords.currentScale, 0, 5, 16, areaEndY + 10 + 16 + 4, 80, 16, scaleNames[processor.mChords.currentScale],
+		g, mousePos.x, mousePos.y, isMouseDrag, mouseDragDistanceY);
 
 	// BaseCC
 	char noteName[16];
@@ -280,7 +285,7 @@ int ParisHarmonyAudioProcessorEditor::paintNoteGroup(Graphics& g, int x, int y, 
 		{
 			hover = rectCollision(xPos, yPos, noteW, noteH, cursorX, cursorY, cursorW, cursorH);
 
-			int note = processor.mChords.getMajorScale(processor.mChords.baseCC, relative);
+			int note = processor.mChords.getScale(processor.mChords.baseCC, relative);
 			note += octave * 12;
 
 			if (hover && !getInteractionsDisabled())
