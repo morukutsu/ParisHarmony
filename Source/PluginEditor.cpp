@@ -103,6 +103,9 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 	}
 
 	// Notes
+	lowestNote = 128;
+	lowestNoteRelative = -1;
+
 	int relative = (processor.mChords.scroll * 5) % 7;
 	for (int i = 0; i < 7; i++)
 	{
@@ -213,6 +216,16 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 		}
 	}
 
+	// Chord info text
+	if (lowestNoteRelative != -1 && lowestNoteRelative >= 0 && lowestNoteRelative < 7)
+	{
+		char* chordsMapping[] = { "I", "ii", "iii", "IV", "V", "vi", "vii°" };
+
+		g.setColour(juce::Colour::fromRGBA(255, 255, 255, 255));
+		g.drawText(chordsMapping[lowestNoteRelative], 400, 280, 40, 20, juce::Justification::centred);
+	}
+
+
 	// Cursor
 	g.setColour(juce::Colour::fromRGBA(255, 255, 255, 96));
 	g.fillRect(cursorX, cursorY, cursorW, cursorH);
@@ -295,6 +308,12 @@ int ParisHarmonyAudioProcessorEditor::paintNoteGroup(Graphics& g, int x, int y, 
 				if (isMouseDown)
 				{
 					notesHeldDuringFrame[note] = true;
+				}
+
+				if (note < lowestNote)
+				{
+					lowestNote = note;
+					lowestNoteRelative = relative;
 				}
 			}
 			else

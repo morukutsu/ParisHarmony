@@ -29,6 +29,8 @@ public:
 	bool isMouseDown, isMouseClicked, isMouseDrag;
 	int mouseDragDistanceY;
 
+	int lowestNote, lowestNoteRelative;
+
 	bool notesHeldDuringFrame[128];
 
 private:
