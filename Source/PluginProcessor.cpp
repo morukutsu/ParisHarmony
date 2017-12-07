@@ -122,7 +122,7 @@ void ParisHarmonyAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBu
 		}
 	}
 
-	midiMessages.clear();
+	//midiMessages.clear();
 
 	mChords.update(buffer.getNumSamples(), midiMessages);
 }

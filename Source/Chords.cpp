@@ -23,11 +23,41 @@ Chords::Chords()
 
 void Chords::update(unsigned int numSamples, MidiBuffer& midiMessages)
 {
-	// Create a net of held notes using the buffer list
 	std::set<int> notesHeld;
+
+	// Use input midi messages to trigger notes form memory
+	MidiBuffer::Iterator it(midiMessages);
+	MidiMessage msg;
+	int samplePosition;
+
+	while (it.getNextEvent(msg, samplePosition) )
+	{
+		if (msg.isNoteOnOrOff())
+		{
+			int mem = msg.getNoteNumber();
+			mem = mem % 7;
+
+			for (int j = 0; j < NOTES_MAX; j++)
+			{
+				int note = chordsMem[mem].notes[j];
+				if (note != -1)
+				{
+					if (msg.isNoteOn())
+						inputNotesHeld.insert(note);
+					else
+						inputNotesHeld.erase(note);
+				}
+			}
+		}
+	}
+
+	// Don't pass through midi messages
+	midiMessages.clear();
+
+	// Create a net of held notes using the buffer list
 	for (int i = 0; i < 128; i++)
 	{
-		if (ccHeld[i])
+		if (ccHeld[i] || inputNotesHeld.find(i) != inputNotesHeld.end() )
 		{
 			notesHeld.insert(i);
 		}

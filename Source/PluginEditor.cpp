@@ -102,6 +102,12 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 		cursorY = notesAreaY;
 	}
 
+	if (cursorW < 0)
+		cursorW = 0;
+
+	if (cursorH < 0)
+		cursorH = 0;
+
 	// Notes
 	lowestNote = 128;
 	lowestNoteRelative = -1;

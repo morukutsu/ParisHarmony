@@ -65,6 +65,8 @@ public:
 	int chordRecordId;
 
 	int currentScale;
+
+	std::set<int> inputNotesHeld;
 };
 
 
