@@ -62,7 +62,7 @@ bool drawClickableSquare(bool* enabled, int x, int y, Graphics& g, int mx, int m
 	return clicked;
 }
 
-bool drawKnobValue(int* value, int min, int max, int x, int y, int w, int h, char* text, Graphics& g, int mx, int my, bool isMouseDrag, int mouseDragDistanceY, std::string key)
+bool drawKnobValue(int* value, int min, int max, int x, int y, int w, int h, const char* text, Graphics& g, int mx, int my, bool isMouseDrag, int mouseDragDistanceY, std::string key)
 {
 	bool hover = (mx >= x && my >= y && mx <= x + w && my <= y + h);
 	if ((!isMouseOverKnob && hover) || currentDragId != -1)
@@ -153,7 +153,7 @@ bool drawKnobValue(int* value, int min, int max, int x, int y, int w, int h, cha
 	return changed;
 }
 
-bool drawButton(bool* enabled, char* text, int x, int y, int w, int h, Graphics& g, int mx, int my, bool mouseDown, bool mouseClick, bool holdMode)
+bool drawButton(bool* enabled, const char* text, int x, int y, int w, int h, Graphics& g, int mx, int my, bool mouseDown, bool mouseClick, bool holdMode)
 {
 	bool disableInteractions = currentDragId != -1;
 	bool hover = (mx >= x && my >= y && mx <= x + w && my <= y + h);
@@ -200,7 +200,7 @@ bool drawButton(bool* enabled, char* text, int x, int y, int w, int h, Graphics&
 
 void noteToStr(char* str, int note, bool isOctave)
 {
-	char* notes[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+	const char* notes[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 	if (note >= 0 && note <= 127)
 	{
 		int octave    = note / 12;

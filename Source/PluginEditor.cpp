@@ -25,7 +25,7 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 	juce::Point<int> mousePos = getMouseXYRelative();
 	g.fillAll(GREY_BG_COLOR);
 
-	Font& f = g.getCurrentFont();
+    Font f = g.getCurrentFont();
 	f.setBold(true);
 	g.setFont(f);
 	
@@ -41,7 +41,7 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 	const float noteW = 9;
 	const float noteH = 32;
 
-	float cursorW, cursorH;
+	float cursorW, cursorH = 0.0;
 
 	if (processor.mChords.octaveMode == 0)
 	{
@@ -144,7 +144,7 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 	drawKnobValue(&processor.mChords.scroll, 0, 127, 16, areaEndY + 10, 32, 16, NULL, g, mousePos.x, mousePos.y, isMouseDrag, mouseDragDistanceY);
 
 	// Scale
-	char* scaleNames[6] = { "MAJOR", "MINOR", "MAJOR H.", "MINOR H.", "MAJOR M.", "MINOR M." };
+	const char* scaleNames[6] = { "MAJOR", "MINOR", "MAJOR H.", "MINOR H.", "MAJOR M.", "MINOR M." };
 	drawKnobValue(&processor.mChords.currentScale, 0, 5, 16, areaEndY + 10 + 16 + 4, 80, 16, scaleNames[processor.mChords.currentScale],
 		g, mousePos.x, mousePos.y, isMouseDrag, mouseDragDistanceY);
 
@@ -225,7 +225,7 @@ void ParisHarmonyAudioProcessorEditor::paint (Graphics& g)
 	// Chord info text
 	if (lowestNoteRelative != -1 && lowestNoteRelative >= 0 && lowestNoteRelative < 7)
 	{
-		char* chordsMapping[] = { "I", "ii", "iii", "IV", "V", "vi", "vii°" };
+		const char* chordsMapping[] = { "I", "ii", "iii", "IV", "V", "vi", "vii" };
 
 		g.setColour(juce::Colour::fromRGBA(255, 255, 255, 255));
 		g.drawText(chordsMapping[lowestNoteRelative], 400, 280, 40, 20, juce::Justification::centred);
